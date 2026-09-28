@@ -4,6 +4,17 @@ Segment map images with an [mmsegmentation](https://github.com/open-mmlab/mmsegm
 
 Typical use: you have a trained model (a `.py` config + a `.pth` checkpoint) and a folder of scanned or georeferenced maps, and you want building footprints as a shapefile plus a QGIS-friendly density layer.
 
+## Sources
+
+This project builds on the paper and pretrained model of Rémi Petitpierre
+(EPFL), and on OpenMMLab's mmsegmentation:
+
+- **Paper** — Rémi Petitpierre, *Generalizable Multiscale Segmentation of
+  Heterogeneous Map Collections* (2026): <https://arxiv.org/abs/2603.05037>
+- **Model & dataset (Semap)** — Rémi Petitpierre, Damien Gomez Donoso and Ben
+  Kriesel, EPFL: <https://zenodo.org/records/19048095>
+- **Library** — OpenMMLab, *MMSegmentation*: <https://github.com/open-mmlab/mmsegmentation>
+
 ## What it produces
 
 For every image found in `data/`:
