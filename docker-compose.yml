@@ -1,0 +1,35 @@
+# Run the whole pipeline:
+#
+#   docker compose run --rm image2shp
+#   docker compose run --rm image2shp --dry-run
+#   docker compose run --rm image2shp data/1907_decoupe.tif --device cpu
+#
+# ./data, ./model, ./config.toml are mounted read-only; ./results is the output.
+# See doc/usage.md.
+services:
+  image2shp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: image2shp:latest
+    volumes:
+      - ./data:/app/data:ro
+      - ./model:/app/model:ro
+      - ./results:/app/results
+      # live-editable config; the image also ships a default copy
+      - ./config.toml:/app/config.toml:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    working_dir: /app
+    # an entrypoint (rather than a command) lets flags pass straight through:
+    #   docker compose run --rm image2shp --dry-run
+    entrypoint: ["python", "-m", "image2shp"]
+
+    # GPU passthrough: requires the NVIDIA Container Toolkit, then uncomment.
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]

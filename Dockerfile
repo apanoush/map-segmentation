@@ -3,6 +3,12 @@ ARG CUDA="11.3"
 ARG CUDNN="8"
 ARG MMCV="2.0.1"
 
+# NOTE (known limitation): this base image ships an older Python than the
+# project's `requires-python`, and mmsegmentation/mmdetection are cloned from
+# their `main` branches. If `pip install .` fails with a Requires-Python error
+# or the clones break, bump the PYTORCH/CUDA/MMCV build args. The image could
+# not be rebuilt as part of the generalization work (no Docker daemon
+# available), so treat it as unverified. See doc/usage.md.
 FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
 
 ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0+PTX"
@@ -44,9 +50,16 @@ RUN pip install --no-cache-dir -e .
 
 WORKDIR /app
 
-COPY pyproject.toml .
+# The project has to be present for `pip install .`: the previous version
+# copied only pyproject.toml, so the image contained no code at all.
+COPY pyproject.toml README.md ./
+COPY src ./src
+# Default configuration (docker-compose bind-mounts the live one over it).
+COPY config.toml ./
+
 RUN pip install .
 
-#COPY . .
-
-#RUN pip install .
+# Data, model and results are provided as bind mounts by docker-compose:
+#   ./data   -> /app/data    (inputs, read-only)
+#   ./model  -> /app/model   (model config + checkpoint, read-only)
+#   ./results-> /app/results (outputs)
