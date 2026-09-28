@@ -1,12 +1,34 @@
-results/*
-data/*
-.ruff_cache
-tests
-old
-todo.md
-mmsegmentation
-TL
-config.toml
-config.docker.toml
+# Data: user-provided inputs, trained models and generated outputs are large
+/data/*
+!/data/.gitkeep
+/model/*
+!/model/.gitkeep
+!/model/README.md
+/results/*
+!/results/.gitkeep
 
-model
+# Virtual environments / tooling
+.venv/
+venv/
+.ruff_cache/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Local clone of upstream mmsegmentation (the Docker image clones its own)
+/mmsegmentation/
+
+# Legacy archive. Mostly local-only; the pre-refactor workflow is the one part
+# that is deliberately kept under version control (see old/original_workflow).
+/old/*
+!/old/original_workflow/
+
+# Large test artifacts (the test suite itself is tracked)
+/tests/fixtures/*.npy
+/tests/fixtures/*.pth
+/tests/fixtures/*.tiff
+
+# Local secrets / env
+.env
+.env.*

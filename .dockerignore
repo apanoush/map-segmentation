@@ -1,57 +1,40 @@
-# Ignore unnecessary files
+# VCS / tooling
 .git
+.ruff_cache
+.pytest_cache
+.venv
+venv
 __pycache__
 *.pyc
 *.pyo
 *.pyd
-.Python
-env
-venv
-.venv
-ENV
-env.bak
-venv.bak
-.venv.bak
-
-# Build artifacts
-build/
-dist/
 *.egg-info/
 *.egg
+build/
+dist/
 
-# Results directories (will be mounted as volume)
-#results/
+# Large folders that are never part of the image:
+# - data/, model/ and results/ are mounted as volumes by docker-compose
+# - mmsegmentation/ is a local clone (the Dockerfile clones its own copy)
+data/
+model/
+results/
+mmsegmentation/
 
-# Model directory (mounted as volume)
-#model/
+# Legacy archive and test artifacts
+old/
+tests/
 
-# Config file (mounted as volume)
-config.toml
-
-# Docker files
+# Docker files themselves
 Dockerfile*
 docker-compose*
 .dockerignore
 
-# OS files
+# OS / logs / temp
 .DS_Store
 Thumbs.db
-
-# Logs
 *.log
 logs/
-
-# Temporary files
 *.tmp
 *.temp
 .cache
-
-
-.ruff_cache
-tests
-old
-todo.md
-mmsegmentation
-TL
-config.toml
-config.docker.toml
