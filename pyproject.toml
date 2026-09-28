@@ -1,14 +1,34 @@
 [project]
 name = "image2shp"
-version = "0.0.1"
-requires-python = ">=3.8"
+version = "0.1.0"
+description = "Segment map images with an mmsegmentation model and export rasters, heatmaps and shapefiles."
+readme = "README.md"
+requires-python = ">=3.9"
 dependencies = [
-    "geopandas",
-    "numpy",
-    "opencv-python",
-    "rasterio",
-    "scikit-image",
-    "shapely",
+    "geopandas>=0.12",
+    "numpy>=1.21",
+    "opencv-python>=4.5",
+    "rasterio>=1.3",
+    "scikit-image>=0.19",
+    "scipy>=1.8",
+    "shapely>=2.0",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+# Only needed to run inference outside Docker; the Docker image provides it.
+inference = [
+    "mmsegmentation>=1.2.2",
+    "torch>=2.1",
+]
+
+[project.scripts]
+image2shp = "image2shp.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
 ]
 
 [build-system]
@@ -17,3 +37,20 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/image2shp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4"]
+ignore = [
+    "E501", # line length is handled by the formatter where it matters
+    "B905", # zip(..., strict=) is 3.10+
+]

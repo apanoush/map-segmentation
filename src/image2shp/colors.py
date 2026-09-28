@@ -1,23 +1,54 @@
+"""Rendering of class-label maps using the palette defined in ``config.toml``."""
+
+from __future__ import annotations
 
 import numpy as np
 
-def preds2colors(pred_mask):
+from image2shp.config import ClassSpec
 
-    image = np.argmax(pred_mask, axis=0)
-    #plt.imshow(image)
-    #plt.savefig(str(output_path).replace(".png", "_2.png"))
+RGB = tuple[int, int, int]
 
 
-    # Step 2: define 6 class colors (BGR)
-    colors = np.array([
-        [0, 0, 0],        # class 0 - black
-        [255, 0, 0],      # class 1 - blue
-        [0, 255, 0],      # class 2 - green
-        [0, 0, 255],      # class 3 - red
-        [255, 255, 0],    # class 4 - cyan
-        [255, 0, 255],    # class 5 - magenta
-    ], dtype=np.uint8)
+def palette_lut(classes: tuple[ClassSpec, ...] | list[ClassSpec]) -> np.ndarray:
+    """Build a ``(max_index + 1, 3)`` uint8 RGB lookup table from ``classes``.
 
-    # Step 3: map labels to colors
-    colored = colors[image]
-    return colored
+    Indices that are not declared in the configuration map to black, so a model
+    emitting more classes than the config describes still renders (in black).
+    """
+    if not classes:
+        return np.zeros((1, 3), dtype=np.uint8)
+    size = max(spec.index for spec in classes) + 1
+    lut = np.zeros((size, 3), dtype=np.uint8)
+    for spec in classes:
+        lut[spec.index] = spec.color
+    return lut
+
+
+def render_labels(labels: np.ndarray, classes: tuple[ClassSpec, ...]) -> np.ndarray:
+    """Map a ``(H, W)`` label map to a ``(H, W, 3)`` uint8 **RGB** image.
+
+    Indices that are not declared in ``classes`` render as class 0 (the usual
+    background class), which is black unless class 0 declares another color.
+    """
+    labels = np.asarray(labels)
+    if labels.ndim != 2:
+        raise ValueError(f"label map must be 2-D, got shape {labels.shape}")
+    lut = palette_lut(classes)
+    known = (labels >= 0) & (labels < len(lut))
+    return lut[np.where(known, labels, 0)]
+
+
+def color_for_index(classes: tuple[ClassSpec, ...], index: int) -> RGB:
+    """RGB color configured for ``index`` (black when undeclared)."""
+    for spec in classes:
+        if spec.index == index:
+            return spec.color
+    return (0, 0, 0)
+
+
+def name_for_index(classes: tuple[ClassSpec, ...], index: int) -> str:
+    """Human readable name for ``index`` (falls back to ``class_<n>``)."""
+    for spec in classes:
+        if spec.index == index:
+            return spec.name
+    return f"class_{index}"

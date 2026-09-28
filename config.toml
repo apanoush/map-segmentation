@@ -1,0 +1,76 @@
+# =============================================================================
+# image2shp configuration
+#
+# Every path is RELATIVE TO THIS FILE (the repository root). The same file is
+# used on the host and inside the container, because docker-compose mounts
+# ./data, ./model and ./results at /app/data, /app/model and /app/results and
+# the container's working directory is /app. That is why there is only one
+# config file instead of a host/container pair.
+#
+# Full reference: doc/configuration.md
+# =============================================================================
+
+[paths]
+data_dir = "data"          # input images are searched for here
+results_dir = "results"    # all outputs are written here
+
+[model]
+# mmsegmentation model definition (Python config file)
+config = "model/mask2former_swin-l-in22k-384x384-pre_8xb2-160k_ade20k-640x640.py"
+# trained weights
+checkpoint = "model/best_mIoU_iter_138828.pth"
+
+[inputs]
+# glob patterns matched against data_dir
+patterns = ["*.tif", "*.tiff", "*.TIF", "*.png", "*.jpg", "*.jpeg"]
+recursive = false
+
+[segmentation]
+# "auto" picks cuda when available, otherwise cpu
+device = "auto"
+# side length (pixels) of the window used for tiled inference; 0 = whole image
+window_size = 2048
+# name of the class (see [[classes]] below) that feeds the heatmap and shapefile
+target_class = "built"
+# Gaussian smoothing (pixels) applied to the heatmap density
+heatmap_sigma = 25
+# dilation (pixels) applied to the class mask before polygon extraction
+buffer_distance = 20
+
+[outputs]
+segmented_png = true      # colored class map (viewing)
+segmented_geotiff = true  # same, georeferenced (GIS)
+heatmap_geotiff = true    # float32 density of target_class (GIS layer)
+shapefile = true          # polygons of target_class
+
+# Class palette: index/name/color are yours to change. `index` must match the
+# class indices of the model that produced the checkpoint above.
+[[classes]]
+index = 0
+name = "background"
+color = "#000000"
+
+[[classes]]
+index = 1
+name = "contours"
+color = "#0000ff"
+
+[[classes]]
+index = 2
+name = "built"
+color = "#00ff00"
+
+[[classes]]
+index = 3
+name = "non-built"
+color = "#ff0000"
+
+[[classes]]
+index = 4
+name = "water"
+color = "#00ffff"
+
+[[classes]]
+index = 5
+name = "road_network"
+color = "#ff00ff"
