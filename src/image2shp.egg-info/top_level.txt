@@ -1,0 +1,4 @@
+config
+segment_image
+segmented_image2shp
+segmented_image2shp_gdal

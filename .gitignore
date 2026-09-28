@@ -1,0 +1,12 @@
+results/*
+data/*
+.ruff_cache
+tests
+old
+todo.md
+mmsegmentation
+TL
+config.toml
+config.docker.toml
+
+model

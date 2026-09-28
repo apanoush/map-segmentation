@@ -1,0 +1,57 @@
+# Ignore unnecessary files
+.git
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.venv
+ENV
+env.bak
+venv.bak
+.venv.bak
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Results directories (will be mounted as volume)
+#results/
+
+# Model directory (mounted as volume)
+#model/
+
+# Config file (mounted as volume)
+config.toml
+
+# Docker files
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.cache
+
+
+.ruff_cache
+tests
+old
+todo.md
+mmsegmentation
+TL
+config.toml
+config.docker.toml

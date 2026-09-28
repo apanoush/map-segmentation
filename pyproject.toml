@@ -1,0 +1,19 @@
+[project]
+name = "image2shp"
+version = "0.0.1"
+requires-python = ">=3.8"
+dependencies = [
+    "geopandas",
+    "numpy",
+    "opencv-python",
+    "rasterio",
+    "scikit-image",
+    "shapely",
+]
+
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/image2shp"]
