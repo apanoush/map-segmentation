@@ -19,10 +19,7 @@ __pycache__/
 # Local clone of upstream mmsegmentation (the Docker image clones its own)
 /mmsegmentation/
 
-# Legacy archive. Mostly local-only; the pre-refactor workflow is the one part
-# that is deliberately kept under version control (see old/original_workflow).
 /old/*
-!/old/original_workflow/
 
 # Large test artifacts (the test suite itself is tracked)
 /tests/fixtures/*.npy
